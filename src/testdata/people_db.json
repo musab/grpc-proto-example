@@ -1,0 +1,14 @@
+[
+  {
+    "skill": ["node"],
+    "full_name": "Homer Simpson"
+  },
+  {
+    "skill": ["c++"],
+    "full_name": "Bart Simpson"
+  },
+  {
+    "skill": ["go"],
+    "full_name": "Marge Simpson"
+  }
+]

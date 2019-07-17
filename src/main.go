@@ -17,8 +17,8 @@ type grpcStreamServer struct {
 	savedNames []*pb.Name // read-only after initialized
 }
 
-// loadFeatures loads features from a JSON file.
-func (s *grpcStreamServer) loadFeatures() {
+// loadPeople loads people from a JSON file.
+func (s *grpcStreamServer) loadPeople() {
 	var data []byte
 
 	data = exampleData
@@ -45,7 +45,7 @@ func (s *grpcStreamServer) ListSkills(req *pb.ListSkillsRequest, stream pb.GrpcS
 func newServer() *grpcStreamServer {
 	s := &grpcStreamServer{}
 
-	s.loadFeatures()
+	s.loadPeople()
 
 	return s
 }

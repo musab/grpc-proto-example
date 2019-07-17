@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package grpcstream;
+
+// Interface exported by the server.
+service GrpcStream {
+  rpc GetNames(GetNamesRequest) returns (GetNamesResponse) {}
+  rpc ListSkills(ListSkillsRequest) returns (stream ListSkillsResponse) {}
+}
+
+message GetNamesRequest {}
+
+message GetNamesResponse {
+  repeated Name names = 1;
+}
+
+message ListSkillsRequest {
+  Name name = 1;
+}
+
+message ListSkillsResponse {
+  Name name = 1;
+  Skill skill = 2;
+}
+
+message Name {
+  string full_name = 1;
+}
+
+message Skill {
+  string language = 1;
+  int32 exp_years = 2;
+}

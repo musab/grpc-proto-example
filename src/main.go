@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 
@@ -14,7 +14,12 @@ import (
 )
 
 type grpcStreamServer struct {
-	savedNames []*pb.Name // read-only after initialized
+	savedNames []people // read-only after initialized
+}
+
+type people struct {
+	FullName string   `json:"full_name"`
+	Skill    []string `json:"skill"`
 }
 
 // loadPeople loads people from a JSON file.
@@ -32,14 +37,21 @@ func (s *grpcStreamServer) GetNames(ctx context.Context, req *pb.GetNamesRequest
 	names := make([]*pb.Name, len(s.savedNames))
 
 	for i := range s.savedNames {
-		names[i] = s.savedNames[i]
+		names[i] = &pb.Name{FullName: s.savedNames[i].FullName}
 	}
 
 	return &pb.GetNamesResponse{Names: names}, nil
 }
 
 func (s *grpcStreamServer) ListSkills(req *pb.ListSkillsRequest, stream pb.GrpcStream_ListSkillsServer) error {
-	return errors.New("Not implemented")
+	for _, name := range s.savedNames {
+		if err := stream.Send(&pb.ListSkillsResponse{Name: &pb.Name{FullName: name.FullName}, Skill: &pb.Skill{Language: name.Skill[0]}}); err != nil {
+			return err
+		}
+		time.Sleep(2 * time.Second)
+	}
+
+	return nil
 }
 
 func newServer() *grpcStreamServer {
@@ -74,6 +86,10 @@ var exampleData = []byte(`[
   {
     "skill": ["go"],
     "full_name": "Marge Simpson"
+	},
+	{
+    "skill": ["javascript"],
+    "full_name": "Lisa Simpson"
   }
 ]
 `)
